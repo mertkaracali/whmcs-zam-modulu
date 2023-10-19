@@ -1,5 +1,5 @@
 <?php
-// Bu dosyayı /modules/addons/zam/ dizinini oluşturup aktarıp daha sonra whmcs üzerinden aktif ediniz.
+
 use WHMCS\Database\Capsule;
 
 $pdo = Capsule::connection()->getPdo();
@@ -18,12 +18,17 @@ function zam_config()
     );
 }
 if (isset($_POST['zam'])) {
-    $zam = $_POST["zam"];
     $products = $_POST["products"];
+    if($zam < 10){
+        $zam = "1.0".$_POST['zam']; 
+    }else{
+        $zam = "1.".$_POST['zam']; 
+    }
     try {
-        $statement = $pdo->prepare('UPDATE tblhosting SET amount = amount * 1.' . $zam . ' WHERE packageid = ' . $products);
+        $statement = $pdo->prepare('UPDATE tblhosting SET amount = amount * ' . $zam . ' WHERE packageid = ' . $products);
 
         $statement->execute();
+        echo '<div class="successbox" bis_skin_checked="1"><strong><span class="title">Değişiklikler Başarıyla Kaydedildi!</span></strong><br>Yaptığınız değişiklikler kaydedildi.</div>';
         if ($pdo->inTransaction()) {
             $pdo->commit();
         }
